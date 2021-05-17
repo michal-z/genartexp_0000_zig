@@ -25,6 +25,8 @@ pub fn main() !void {
     c.glfwMakeContextCurrent(window);
     c.glfwSwapInterval(1);
 
+    c.initOpenGlEntryPoints();
+
     while (c.glfwWindowShouldClose(window) == c.GLFW_FALSE) {
         c.glClear(c.GL_COLOR_BUFFER_BIT | c.GL_DEPTH_BUFFER_BIT | c.GL_STENCIL_BUFFER_BIT);
         c.glfwSwapBuffers(window);
