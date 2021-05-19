@@ -1,6 +1,6 @@
 pub usingnamespace @cImport({
     @cDefine("GLFW_INCLUDE_GLEXT", "");
-    @cInclude("glfw3.h");
+    @cInclude("GLFW/glfw3.h");
 });
 pub var glCreateTextures: @typeInfo(PFNGLCREATETEXTURESPROC).Optional.child = undefined;
 pub var glTextureStorage2D: @typeInfo(PFNGLTEXTURESTORAGE2DPROC).Optional.child = undefined;
@@ -32,6 +32,12 @@ pub fn initOpenGlEntryPoints() void {
         glfwGetProcAddress("glNamedFramebufferTexture").?,
     );
     glBlitNamedFramebuffer = @ptrCast(@TypeOf(glBlitNamedFramebuffer), glfwGetProcAddress("glBlitNamedFramebuffer").?);
-    glClearNamedFramebufferfv = @ptrCast(@TypeOf(glClearNamedFramebufferfv), glfwGetProcAddress("glClearNamedFramebufferfv").?);
-    glClearNamedFramebufferfi = @ptrCast(@TypeOf(glClearNamedFramebufferfi), glfwGetProcAddress("glClearNamedFramebufferfi").?);
+    glClearNamedFramebufferfv = @ptrCast(
+        @TypeOf(glClearNamedFramebufferfv),
+        glfwGetProcAddress("glClearNamedFramebufferfv").?,
+    );
+    glClearNamedFramebufferfi = @ptrCast(
+        @TypeOf(glClearNamedFramebufferfi),
+        glfwGetProcAddress("glClearNamedFramebufferfi").?,
+    );
 }

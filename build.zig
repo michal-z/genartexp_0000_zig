@@ -16,7 +16,7 @@ pub fn build(b: *std.build.Builder) void {
     exe.setBuildMode(mode);
 
     exe.addIncludeDir("c");
-    exe.addLibPath("c");
+    exe.addLibPath("c/lib");
     exe.linkSystemLibrary("c");
     exe.linkSystemLibrary("glfw3");
     exe.linkSystemLibrary("user32");
