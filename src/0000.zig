@@ -28,8 +28,13 @@ pub fn main() !void {
     c.initOpenGlEntryPoints();
 
     while (c.glfwWindowShouldClose(window) == c.GLFW_FALSE) {
-        c.glClear(c.GL_COLOR_BUFFER_BIT | c.GL_DEPTH_BUFFER_BIT | c.GL_STENCIL_BUFFER_BIT);
+        c.glClearNamedFramebufferfv(0, c.GL_COLOR, 0, &[_]f32{ 0.2, 0.4, 0.8, 1.0 });
+        c.glClearNamedFramebufferfi(0, c.GL_DEPTH_STENCIL, 0, 1.0, 0);
+
         c.glfwSwapBuffers(window);
         c.glfwPollEvents();
+        if (c.glGetError() != c.GL_NO_ERROR) {
+            panic("OpenGL error detected.\n", .{});
+        }
     }
 }

@@ -12,8 +12,8 @@ pub var glDeleteFramebuffers: @typeInfo(PFNGLDELETEFRAMEBUFFERSPROC).Optional.ch
 pub var glBindFramebuffer: @typeInfo(PFNGLBINDFRAMEBUFFERPROC).Optional.child = undefined;
 pub var glNamedFramebufferTexture: @typeInfo(PFNGLCREATEFRAMEBUFFERSPROC).Optional.child = undefined;
 pub var glBlitNamedFramebuffer: @typeInfo(PFNGLBLITNAMEDFRAMEBUFFERPROC).Optional.child = undefined;
-pub var glClearBufferfv: @typeInfo(PFNGLCLEARBUFFERFVPROC).Optional.child = undefined;
-pub var glClearBufferfi: @typeInfo(PFNGLCLEARBUFFERFIPROC).Optional.child = undefined;
+pub var glClearNamedFramebufferfv: @typeInfo(PFNGLCLEARNAMEDFRAMEBUFFERFVPROC).Optional.child = undefined;
+pub var glClearNamedFramebufferfi: @typeInfo(PFNGLCLEARNAMEDFRAMEBUFFERFIPROC).Optional.child = undefined;
 
 pub fn initOpenGlEntryPoints() void {
     glCreateTextures = @ptrCast(@TypeOf(glCreateTextures), glfwGetProcAddress("glCreateTextures").?);
@@ -32,6 +32,6 @@ pub fn initOpenGlEntryPoints() void {
         glfwGetProcAddress("glNamedFramebufferTexture").?,
     );
     glBlitNamedFramebuffer = @ptrCast(@TypeOf(glBlitNamedFramebuffer), glfwGetProcAddress("glBlitNamedFramebuffer").?);
-    glClearBufferfv = @ptrCast(@TypeOf(glClearBufferfv), glfwGetProcAddress("glClearBufferfv").?);
-    glClearBufferfi = @ptrCast(@TypeOf(glClearBufferfi), glfwGetProcAddress("glClearBufferfi").?);
+    glClearNamedFramebufferfv = @ptrCast(@TypeOf(glClearNamedFramebufferfv), glfwGetProcAddress("glClearNamedFramebufferfv").?);
+    glClearNamedFramebufferfi = @ptrCast(@TypeOf(glClearNamedFramebufferfi), glfwGetProcAddress("glClearNamedFramebufferfi").?);
 }
