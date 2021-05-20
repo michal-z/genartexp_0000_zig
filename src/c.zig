@@ -2,7 +2,10 @@ pub usingnamespace @cImport({
     @cDefine("GLFW_INCLUDE_GLEXT", "");
     @cInclude("GLFW/glfw3.h");
     @cInclude("fmod.h");
+    @cInclude("stb_image.h");
+    @cInclude("stb_perlin.h");
 });
+
 pub var glCreateTextures: @typeInfo(PFNGLCREATETEXTURESPROC).Optional.child = undefined;
 pub var glTextureStorage2D: @typeInfo(PFNGLTEXTURESTORAGE2DPROC).Optional.child = undefined;
 pub var glTextureStorage2DMultisample: @typeInfo(PFNGLTEXTURESTORAGE2DMULTISAMPLEPROC).Optional.child = undefined;

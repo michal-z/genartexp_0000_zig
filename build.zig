@@ -15,9 +15,13 @@ pub fn build(b: *std.build.Builder) void {
     exe.setTarget(target);
     exe.setBuildMode(mode);
 
+    exe.addCSourceFile("c/stb_image.c", &[_][]const u8{"-std=c99"});
+    exe.addCSourceFile("c/stb_perlin.c", &[_][]const u8{"-std=c99"});
+
     exe.addIncludeDir("c");
     exe.addIncludeDir("c/fmod");
     exe.addLibPath("c/lib");
+
     exe.linkSystemLibrary("c");
     exe.linkSystemLibrary("glfw3");
     exe.linkSystemLibrary("user32");
@@ -25,6 +29,7 @@ pub fn build(b: *std.build.Builder) void {
     exe.linkSystemLibrary("shell32");
     exe.linkSystemLibrary("opengl32");
     exe.linkSystemLibrary("fmodL_vc");
+
     exe.install();
 
     const run_cmd = exe.run();
