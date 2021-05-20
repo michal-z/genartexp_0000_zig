@@ -22,12 +22,12 @@ pub fn build(b: *std.build.Builder) void {
     exe.addIncludeDir("c/fmod");
     exe.addLibPath("c/lib");
 
-    exe.linkSystemLibrary("c");
-    exe.linkSystemLibrary("glfw3");
     exe.linkSystemLibrary("user32");
     exe.linkSystemLibrary("gdi32");
     exe.linkSystemLibrary("shell32");
     exe.linkSystemLibrary("opengl32");
+    exe.linkSystemLibrary("c");
+    exe.linkSystemLibrary("glfw3");
     exe.linkSystemLibrary("fmodL_vc");
 
     exe.install();
