@@ -1,6 +1,7 @@
 pub usingnamespace @cImport({
     @cDefine("GLFW_INCLUDE_GLEXT", "");
     @cInclude("GLFW/glfw3.h");
+    @cInclude("fmod.h");
 });
 pub var glCreateTextures: @typeInfo(PFNGLCREATETEXTURESPROC).Optional.child = undefined;
 pub var glTextureStorage2D: @typeInfo(PFNGLTEXTURESTORAGE2DPROC).Optional.child = undefined;
@@ -15,6 +16,12 @@ pub var glBlitNamedFramebuffer: @typeInfo(PFNGLBLITNAMEDFRAMEBUFFERPROC).Optiona
 pub var glClearNamedFramebufferfv: @typeInfo(PFNGLCLEARNAMEDFRAMEBUFFERFVPROC).Optional.child = undefined;
 pub var glClearNamedFramebufferfi: @typeInfo(PFNGLCLEARNAMEDFRAMEBUFFERFIPROC).Optional.child = undefined;
 pub var glDebugMessageCallback: @typeInfo(PFNGLDEBUGMESSAGECALLBACKPROC).Optional.child = undefined;
+pub var glUseProgram: @typeInfo(PFNGLUSEPROGRAMPROC).Optional.child = undefined;
+pub var glUseProgramStages: @typeInfo(PFNGLUSEPROGRAMSTAGESPROC).Optional.child = undefined;
+pub var glCreateShaderProgramv: @typeInfo(PFNGLCREATESHADERPROGRAMVPROC).Optional.child = undefined;
+pub var glDeleteProgram: @typeInfo(PFNGLDELETEPROGRAMPROC).Optional.child = undefined;
+pub var glCreateProgramPipelines: @typeInfo(PFNGLCREATEPROGRAMPIPELINESPROC).Optional.child = undefined;
+pub var glBindProgramPipeline: @typeInfo(PFNGLBINDPROGRAMPIPELINEPROC).Optional.child = undefined;
 
 pub fn initOpenGlEntryPoints() void {
     glCreateTextures = @ptrCast(@TypeOf(glCreateTextures), glfwGetProcAddress("glCreateTextures").?);
@@ -42,4 +49,10 @@ pub fn initOpenGlEntryPoints() void {
         glfwGetProcAddress("glClearNamedFramebufferfi").?,
     );
     glDebugMessageCallback = @ptrCast(@TypeOf(glDebugMessageCallback), glfwGetProcAddress("glDebugMessageCallback").?);
+    glUseProgram = @ptrCast(@TypeOf(glUseProgram), glfwGetProcAddress("glUseProgram").?);
+    glUseProgramStages = @ptrCast(@TypeOf(glUseProgramStages), glfwGetProcAddress("glUseProgramStages").?);
+    glCreateShaderProgramv = @ptrCast(@TypeOf(glCreateShaderProgramv), glfwGetProcAddress("glCreateShaderProgramv").?);
+    glDeleteProgram = @ptrCast(@TypeOf(glDeleteProgram), glfwGetProcAddress("glDeleteProgram").?);
+    glCreateProgramPipelines = @ptrCast(@TypeOf(glCreateProgramPipelines), glfwGetProcAddress("glCreateProgramPipelines").?);
+    glBindProgramPipeline = @ptrCast(@TypeOf(glBindProgramPipeline), glfwGetProcAddress("glBindProgramPipeline").?);
 }

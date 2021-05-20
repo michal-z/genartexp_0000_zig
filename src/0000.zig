@@ -4,6 +4,7 @@ const c = @import("c.zig");
 const window_name = "generative art experiment 0000";
 const window_width = 1920;
 const window_height = 1080;
+var oglppo: c.GLuint = undefined;
 
 pub fn main() !void {
     _ = c.glfwSetErrorCallback(handleGlfwError);
@@ -26,6 +27,9 @@ pub fn main() !void {
 
     c.initOpenGlEntryPoints();
 
+    c.glCreateProgramPipelines(1, &oglppo);
+    c.glBindProgramPipeline(oglppo);
+
     c.glEnable(c.GL_DEBUG_OUTPUT);
     c.glDebugMessageCallback(handleGlError, null);
 
@@ -34,10 +38,12 @@ pub fn main() !void {
     var srgb_color_tex: c.GLuint = undefined;
     c.glCreateTextures(c.GL_TEXTURE_2D_MULTISAMPLE, 1, &srgb_color_tex);
     c.glTextureStorage2DMultisample(srgb_color_tex, 8, c.GL_SRGB8_ALPHA8, window_width, window_height, c.GL_FALSE);
+    defer c.glDeleteTextures(1, &srgb_color_tex);
 
     var srgb_ds_tex: c.GLuint = undefined;
     c.glCreateTextures(c.GL_TEXTURE_2D_MULTISAMPLE, 1, &srgb_ds_tex);
     c.glTextureStorage2DMultisample(srgb_ds_tex, 8, c.GL_DEPTH24_STENCIL8, window_width, window_height, c.GL_FALSE);
+    defer c.glDeleteTextures(1, &srgb_ds_tex);
 
     var srgb_fbo: c.GLuint = undefined;
     c.glCreateFramebuffers(1, &srgb_fbo);
@@ -45,6 +51,22 @@ pub fn main() !void {
     c.glNamedFramebufferTexture(srgb_fbo, c.GL_DEPTH_STENCIL_ATTACHMENT, srgb_ds_tex, 0);
     c.glClearNamedFramebufferfv(srgb_fbo, c.GL_COLOR, 0, &[_]f32{ 0.0, 0.0, 0.0, 0.0 });
     c.glClearNamedFramebufferfi(srgb_fbo, c.GL_DEPTH_STENCIL, 0, 1.0, 0);
+    defer c.glDeleteFramebuffers(1, &srgb_fbo);
+
+    var sys: ?*c.FMOD_SYSTEM = undefined;
+    if (c.FMOD_System_Create(&sys) != .FMOD_OK) {
+        std.debug.panic("FMOD_System_Create failed.\n", .{});
+    }
+    defer _ = c.FMOD_System_Release(sys);
+
+    const fs = c.glCreateShaderProgramv(c.GL_FRAGMENT_SHADER, 1, &@as([*c]const u8, 
+        \\  #version 460 compatibility
+        \\
+        \\  void main() {
+        \\      gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+        \\  }
+    ));
+    defer c.glDeleteProgram(fs);
 
     while (c.glfwWindowShouldClose(window) == c.GLFW_FALSE) {
         const stats = updateFrameStats(window, window_name);
@@ -54,11 +76,13 @@ pub fn main() !void {
 
         c.glBindFramebuffer(c.GL_DRAW_FRAMEBUFFER, srgb_fbo);
 
+        c.glUseProgramStages(oglppo, c.GL_FRAGMENT_SHADER_BIT, fs);
         c.glBegin(c.GL_TRIANGLES);
         c.glVertex2f(-0.7, -0.7);
         c.glVertex2f(0.7, -0.7);
         c.glVertex2f(0.0, 0.7);
         c.glEnd();
+        c.glUseProgramStages(oglppo, c.GL_ALL_SHADER_BITS, 0);
 
         c.glBindFramebuffer(c.GL_DRAW_FRAMEBUFFER, 0);
         c.glBlitNamedFramebuffer(
@@ -82,10 +106,6 @@ pub fn main() !void {
         c.glfwSwapBuffers(window);
         c.glfwPollEvents();
     }
-
-    c.glDeleteFramebuffers(1, &srgb_fbo);
-    c.glDeleteTextures(1, &srgb_ds_tex);
-    c.glDeleteTextures(1, &srgb_color_tex);
 }
 
 fn updateFrameStats(window: *c.GLFWwindow, name: [*:0]const u8) struct { time: f64, delta_time: f32 } {

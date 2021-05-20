@@ -16,6 +16,7 @@ pub fn build(b: *std.build.Builder) void {
     exe.setBuildMode(mode);
 
     exe.addIncludeDir("c");
+    exe.addIncludeDir("c/fmod");
     exe.addLibPath("c/lib");
     exe.linkSystemLibrary("c");
     exe.linkSystemLibrary("glfw3");
@@ -23,6 +24,7 @@ pub fn build(b: *std.build.Builder) void {
     exe.linkSystemLibrary("gdi32");
     exe.linkSystemLibrary("shell32");
     exe.linkSystemLibrary("opengl32");
+    exe.linkSystemLibrary("fmodL_vc");
     exe.install();
 
     const run_cmd = exe.run();
