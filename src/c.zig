@@ -9,6 +9,11 @@ pub usingnamespace @cImport({
 pub var glCreateTextures: @typeInfo(PFNGLCREATETEXTURESPROC).Optional.child = undefined;
 pub var glTextureStorage2D: @typeInfo(PFNGLTEXTURESTORAGE2DPROC).Optional.child = undefined;
 pub var glTextureStorage2DMultisample: @typeInfo(PFNGLTEXTURESTORAGE2DMULTISAMPLEPROC).Optional.child = undefined;
+pub var glTextureParameteri: @typeInfo(PFNGLTEXTUREPARAMETERIPROC).Optional.child = undefined;
+pub var glTextureParameterf: @typeInfo(PFNGLTEXTUREPARAMETERFPROC).Optional.child = undefined;
+pub var glTextureParameterfv: @typeInfo(PFNGLTEXTUREPARAMETERFVPROC).Optional.child = undefined;
+pub var glTextureSubImage2D: @typeInfo(PFNGLTEXTURESUBIMAGE2DPROC).Optional.child = undefined;
+pub var glDrawTextureNV: @typeInfo(PFNGLDRAWTEXTURENVPROC).Optional.child = undefined;
 pub var glMatrixLoadIdentityEXT: @typeInfo(PFNGLMATRIXLOADIDENTITYEXTPROC).Optional.child = undefined;
 pub var glMatrixOrthoEXT: @typeInfo(PFNGLMATRIXORTHOEXTPROC).Optional.child = undefined;
 pub var glCreateFramebuffers: @typeInfo(PFNGLCREATEFRAMEBUFFERSPROC).Optional.child = undefined;
@@ -33,6 +38,11 @@ pub fn initOpenGlEntryPoints() void {
         @TypeOf(glTextureStorage2DMultisample),
         glfwGetProcAddress("glTextureStorage2DMultisample").?,
     );
+    glTextureParameteri = @ptrCast(@TypeOf(glTextureParameteri), glfwGetProcAddress("glTextureParameteri").?);
+    glTextureParameterf = @ptrCast(@TypeOf(glTextureParameterf), glfwGetProcAddress("glTextureParameterf").?);
+    glTextureParameterfv = @ptrCast(@TypeOf(glTextureParameterfv), glfwGetProcAddress("glTextureParameterfv").?);
+    glTextureSubImage2D = @ptrCast(@TypeOf(glTextureSubImage2D), glfwGetProcAddress("glTextureSubImage2D").?);
+    glDrawTextureNV = @ptrCast(@TypeOf(glDrawTextureNV), glfwGetProcAddress("glDrawTextureNV").?);
     glMatrixLoadIdentityEXT = @ptrCast(@TypeOf(glMatrixLoadIdentityEXT), glfwGetProcAddress("glMatrixLoadIdentityEXT").?);
     glMatrixOrthoEXT = @ptrCast(@TypeOf(glMatrixOrthoEXT), glfwGetProcAddress("glMatrixOrthoEXT").?);
     glCreateFramebuffers = @ptrCast(@TypeOf(glCreateFramebuffers), glfwGetProcAddress("glCreateFramebuffers").?);

@@ -53,7 +53,7 @@ pub fn main() !void {
     c.glClearNamedFramebufferfi(srgb_fbo, c.GL_DEPTH_STENCIL, 0, 1.0, 0);
     defer c.glDeleteFramebuffers(1, &srgb_fbo);
 
-    var sys: ?*c.FMOD_SYSTEM = undefined;
+    var sys: ?*c.FMOD_SYSTEM = null;
     if (c.FMOD_System_Create(&sys) != .FMOD_OK) {
         std.debug.panic("FMOD_System_Create failed.\n", .{});
     }
@@ -67,6 +67,21 @@ pub fn main() !void {
         \\  }
     ));
     defer c.glDeleteProgram(fs);
+
+    var image_w: c_int = undefined;
+    var image_h: c_int = undefined;
+    var image_c: c_int = undefined;
+    const image_data = c.stbi_load("data/genart_0025_5.png", &image_w, &image_h, &image_c, 4);
+    if (image_data == null) {
+        std.debug.panic("Failed to load image.\n", .{});
+    }
+    defer c.stbi_image_free(image_data);
+
+    var image_tex: c.GLuint = undefined;
+    c.glCreateTextures(c.GL_TEXTURE_2D, 1, &image_tex);
+    c.glTextureStorage2D(image_tex, 1, c.GL_SRGB8_ALPHA8, image_w, image_h);
+    c.glTextureSubImage2D(image_tex, 0, 0, 0, image_w, image_h, c.GL_RGBA, c.GL_UNSIGNED_BYTE, image_data);
+    defer c.glDeleteTextures(1, &image_tex);
 
     while (c.glfwWindowShouldClose(window) == c.GLFW_FALSE) {
         const stats = updateFrameStats(window, window_name);
@@ -83,6 +98,20 @@ pub fn main() !void {
         c.glVertex2f(0.0, 0.7);
         c.glEnd();
         c.glUseProgramStages(oglppo, c.GL_ALL_SHADER_BITS, 0);
+
+        c.glDrawTextureNV(
+            image_tex,
+            0,
+            0.0, // x
+            0.0, // y
+            @intToFloat(f32, image_w),
+            @intToFloat(f32, image_h),
+            0.0, // z
+            0.0, // s0
+            1.0, // t0
+            1.0, // s1
+            0.0, // t1
+        );
 
         c.glBindFramebuffer(c.GL_DRAW_FRAMEBUFFER, 0);
         c.glBlitNamedFramebuffer(
