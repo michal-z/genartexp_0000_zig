@@ -89,8 +89,10 @@ pub fn main() !void {
 
         c.glClearNamedFramebufferfv(srgb_fbo, c.GL_COLOR, 0, &[_]f32{ 0.2, 0.4, 0.8, 1.0 });
         c.glClearNamedFramebufferfi(srgb_fbo, c.GL_DEPTH_STENCIL, 0, 1.0, 0);
-
         c.glBindFramebuffer(c.GL_DRAW_FRAMEBUFFER, srgb_fbo);
+
+        c.glMatrixLoadIdentityEXT(c.GL_PROJECTION);
+        c.glMatrixLoadIdentityEXT(c.GL_MODELVIEW);
 
         c.glUseProgramStages(oglppo, c.GL_FRAGMENT_SHADER_BIT, fs);
         c.glBegin(c.GL_TRIANGLES);
@@ -113,6 +115,35 @@ pub fn main() !void {
             1.0, // s1
             0.0, // t1
         );
+
+        c.glMatrixOrthoEXT(
+            c.GL_PROJECTION,
+            -0.5 * @intToFloat(f32, window_width),
+            0.5 * @intToFloat(f32, window_width),
+            -0.5 * @intToFloat(f32, window_height),
+            0.5 * @intToFloat(f32, window_height),
+            -1.0,
+            1.0,
+        );
+
+        const path_obj = 1;
+        const path_commands = [_]u8{ c.GL_MOVE_TO_NV, c.GL_LINE_TO_NV, c.GL_LINE_TO_NV };
+        const path_coords = [_][2]f32{
+            [_]f32{ -100.0, -100.0 },
+            [_]f32{ 0.0, -10.0 },
+            [_]f32{ 150.0 * @floatCast(f32, std.math.sin(stats.time)), 200.0 },
+        };
+        c.glPathCommandsNV(path_obj, path_commands.len, &path_commands, path_coords.len * 2, c.GL_FLOAT, &path_coords);
+        c.glPathParameterfNV(path_obj, c.GL_PATH_STROKE_WIDTH_NV, 6.5);
+        c.glPathParameteriNV(path_obj, c.GL_PATH_JOIN_STYLE_NV, c.GL_ROUND_NV);
+
+        c.glStencilStrokePathNV(path_obj, c.GL_COUNT_UP_NV, 0x1F);
+
+        c.glEnable(c.GL_STENCIL_TEST);
+        c.glStencilFunc(c.GL_NOTEQUAL, 0, 0x1F);
+        c.glStencilOp(c.GL_KEEP, c.GL_KEEP, c.GL_ZERO);
+        c.glColor3f(1.0, 1.0, 0.0);
+        c.glCoverStrokePathNV(path_obj, c.GL_BOUNDING_BOX_NV);
 
         c.glBindFramebuffer(c.GL_DRAW_FRAMEBUFFER, 0);
         c.glBlitNamedFramebuffer(

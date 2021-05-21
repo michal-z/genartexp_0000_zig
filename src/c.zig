@@ -30,6 +30,15 @@ pub var glCreateShaderProgramv: @typeInfo(PFNGLCREATESHADERPROGRAMVPROC).Optiona
 pub var glDeleteProgram: @typeInfo(PFNGLDELETEPROGRAMPROC).Optional.child = undefined;
 pub var glCreateProgramPipelines: @typeInfo(PFNGLCREATEPROGRAMPIPELINESPROC).Optional.child = undefined;
 pub var glBindProgramPipeline: @typeInfo(PFNGLBINDPROGRAMPIPELINEPROC).Optional.child = undefined;
+pub var glStencilFillPathNV: @typeInfo(PFNGLSTENCILFILLPATHNVPROC).Optional.child = undefined;
+pub var glStencilStrokePathNV: @typeInfo(PFNGLSTENCILSTROKEPATHNVPROC).Optional.child = undefined;
+pub var glCoverFillPathNV: @typeInfo(PFNGLCOVERFILLPATHNVPROC).Optional.child = undefined;
+pub var glCoverStrokePathNV: @typeInfo(PFNGLCOVERSTROKEPATHNVPROC).Optional.child = undefined;
+pub var glPathCommandsNV: @typeInfo(PFNGLPATHCOMMANDSNVPROC).Optional.child = undefined;
+pub var glPathParameteriNV: @typeInfo(PFNGLPATHPARAMETERINVPROC).Optional.child = undefined;
+pub var glPathParameterivNV: @typeInfo(PFNGLPATHPARAMETERIVNVPROC).Optional.child = undefined;
+pub var glPathParameterfNV: @typeInfo(PFNGLPATHPARAMETERFNVPROC).Optional.child = undefined;
+pub var glPathParameterfvNV: @typeInfo(PFNGLPATHPARAMETERFVNVPROC).Optional.child = undefined;
 
 pub fn initOpenGlEntryPoints() void {
     glCreateTextures = @ptrCast(@TypeOf(glCreateTextures), glfwGetProcAddress("glCreateTextures").?);
@@ -68,4 +77,13 @@ pub fn initOpenGlEntryPoints() void {
     glDeleteProgram = @ptrCast(@TypeOf(glDeleteProgram), glfwGetProcAddress("glDeleteProgram").?);
     glCreateProgramPipelines = @ptrCast(@TypeOf(glCreateProgramPipelines), glfwGetProcAddress("glCreateProgramPipelines").?);
     glBindProgramPipeline = @ptrCast(@TypeOf(glBindProgramPipeline), glfwGetProcAddress("glBindProgramPipeline").?);
+    glStencilFillPathNV = @ptrCast(@TypeOf(glStencilFillPathNV), glfwGetProcAddress("glStencilFillPathNV").?);
+    glStencilStrokePathNV = @ptrCast(@TypeOf(glStencilStrokePathNV), glfwGetProcAddress("glStencilStrokePathNV").?);
+    glCoverFillPathNV = @ptrCast(@TypeOf(glCoverFillPathNV), glfwGetProcAddress("glCoverFillPathNV").?);
+    glCoverStrokePathNV = @ptrCast(@TypeOf(glCoverStrokePathNV), glfwGetProcAddress("glCoverStrokePathNV").?);
+    glPathCommandsNV = @ptrCast(@TypeOf(glPathCommandsNV), glfwGetProcAddress("glPathCommandsNV").?);
+    glPathParameteriNV = @ptrCast(@TypeOf(glPathParameteriNV), glfwGetProcAddress("glPathParameteriNV").?);
+    glPathParameterivNV = @ptrCast(@TypeOf(glPathParameterivNV), glfwGetProcAddress("glPathParameterivNV").?);
+    glPathParameterfNV = @ptrCast(@TypeOf(glPathParameterfNV), glfwGetProcAddress("glPathParameterfNV").?);
+    glPathParameterfvNV = @ptrCast(@TypeOf(glPathParameterfvNV), glfwGetProcAddress("glPathParameterfvNV").?);
 }
