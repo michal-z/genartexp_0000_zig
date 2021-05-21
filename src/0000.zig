@@ -70,8 +70,7 @@ pub fn main() !void {
 
     var image_w: c_int = undefined;
     var image_h: c_int = undefined;
-    var image_c: c_int = undefined;
-    const image_data = c.stbi_load("data/genart_0025_5.png", &image_w, &image_h, &image_c, 4);
+    const image_data = c.stbi_load("data/genart_0025_5.png", &image_w, &image_h, null, 4);
     if (image_data == null) {
         std.debug.panic("Failed to load image.\n", .{});
     }
@@ -81,6 +80,8 @@ pub fn main() !void {
     c.glCreateTextures(c.GL_TEXTURE_2D, 1, &image_tex);
     c.glTextureStorage2D(image_tex, 1, c.GL_SRGB8_ALPHA8, image_w, image_h);
     c.glTextureSubImage2D(image_tex, 0, 0, 0, image_w, image_h, c.GL_RGBA, c.GL_UNSIGNED_BYTE, image_data);
+    c.glTextureParameteri(image_tex, c.GL_TEXTURE_MIN_FILTER, c.GL_LINEAR);
+    c.glTextureParameteri(image_tex, c.GL_TEXTURE_MAG_FILTER, c.GL_LINEAR);
     defer c.glDeleteTextures(1, &image_tex);
 
     while (c.glfwWindowShouldClose(window) == c.GLFW_FALSE) {
