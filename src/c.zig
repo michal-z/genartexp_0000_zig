@@ -34,6 +34,8 @@ pub var glStencilFillPathNV: @typeInfo(PFNGLSTENCILFILLPATHNVPROC).Optional.chil
 pub var glStencilStrokePathNV: @typeInfo(PFNGLSTENCILSTROKEPATHNVPROC).Optional.child = undefined;
 pub var glCoverFillPathNV: @typeInfo(PFNGLCOVERFILLPATHNVPROC).Optional.child = undefined;
 pub var glCoverStrokePathNV: @typeInfo(PFNGLCOVERSTROKEPATHNVPROC).Optional.child = undefined;
+pub var glStencilThenCoverFillPathNV: @typeInfo(PFNGLSTENCILTHENCOVERFILLPATHNVPROC).Optional.child = undefined;
+pub var glStencilThenCoverStrokePathNV: @typeInfo(PFNGLSTENCILTHENCOVERSTROKEPATHNVPROC).Optional.child = undefined;
 pub var glPathCommandsNV: @typeInfo(PFNGLPATHCOMMANDSNVPROC).Optional.child = undefined;
 pub var glPathParameteriNV: @typeInfo(PFNGLPATHPARAMETERINVPROC).Optional.child = undefined;
 pub var glPathParameterivNV: @typeInfo(PFNGLPATHPARAMETERIVNVPROC).Optional.child = undefined;
@@ -81,6 +83,14 @@ pub fn initOpenGlEntryPoints() void {
     glStencilStrokePathNV = @ptrCast(@TypeOf(glStencilStrokePathNV), glfwGetProcAddress("glStencilStrokePathNV").?);
     glCoverFillPathNV = @ptrCast(@TypeOf(glCoverFillPathNV), glfwGetProcAddress("glCoverFillPathNV").?);
     glCoverStrokePathNV = @ptrCast(@TypeOf(glCoverStrokePathNV), glfwGetProcAddress("glCoverStrokePathNV").?);
+    glStencilThenCoverFillPathNV = @ptrCast(
+        @TypeOf(glStencilThenCoverFillPathNV),
+        glfwGetProcAddress("glStencilThenCoverFillPathNV").?,
+    );
+    glStencilThenCoverStrokePathNV = @ptrCast(
+        @TypeOf(glStencilThenCoverStrokePathNV),
+        glfwGetProcAddress("glStencilThenCoverStrokePathNV").?,
+    );
     glPathCommandsNV = @ptrCast(@TypeOf(glPathCommandsNV), glfwGetProcAddress("glPathCommandsNV").?);
     glPathParameteriNV = @ptrCast(@TypeOf(glPathParameteriNV), glfwGetProcAddress("glPathParameteriNV").?);
     glPathParameterivNV = @ptrCast(@TypeOf(glPathParameterivNV), glfwGetProcAddress("glPathParameterivNV").?);

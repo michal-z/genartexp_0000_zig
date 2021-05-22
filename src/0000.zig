@@ -31,7 +31,7 @@ pub fn main() !void {
     c.glCreateProgramPipelines(1, &oglppo);
     c.glBindProgramPipeline(oglppo);
 
-    c.glEnable(c.GL_DEBUG_OUTPUT);
+    //c.glEnable(c.GL_DEBUG_OUTPUT);
     c.glDebugMessageCallback(handleGlError, null);
 
     c.glEnable(c.GL_FRAMEBUFFER_SRGB);
@@ -145,22 +145,23 @@ pub fn main() !void {
         path_commands[num_vertices] = c.GL_CLOSE_PATH_NV;
 
         c.glPathCommandsNV(path_obj, path_commands.len, &path_commands, path_coords.len * 2, c.GL_FLOAT, &path_coords);
-        c.glPathParameterfNV(path_obj, c.GL_PATH_STROKE_WIDTH_NV, 8.5);
+        c.glPathParameterfNV(path_obj, c.GL_PATH_STROKE_WIDTH_NV, 6.5);
         c.glPathParameteriNV(path_obj, c.GL_PATH_JOIN_STYLE_NV, c.GL_ROUND_NV);
 
+        c.glEnable(c.GL_BLEND);
+        c.glBlendFunc(c.GL_SRC_ALPHA, c.GL_ONE_MINUS_SRC_ALPHA);
         c.glEnable(c.GL_STENCIL_TEST);
         c.glStencilFunc(c.GL_NOTEQUAL, 0, 0xFF);
         c.glStencilOp(c.GL_KEEP, c.GL_KEEP, c.GL_ZERO);
 
-        c.glColor3f(1.0, 0.5, 1.0);
-        c.glStencilFillPathNV(path_obj, c.GL_COUNT_UP_NV, 0xFF);
-        c.glCoverFillPathNV(path_obj, c.GL_BOUNDING_BOX_NV);
+        c.glColor4f(1.0, 0.5, 1.0, 0.5);
+        c.glStencilThenCoverFillPathNV(path_obj, c.GL_COUNT_UP_NV, 0xFF, c.GL_BOUNDING_BOX_NV);
 
         c.glColor3f(0.0, 0.0, 0.0);
-        c.glStencilStrokePathNV(path_obj, 0x1, 0xFF);
-        c.glCoverStrokePathNV(path_obj, c.GL_CONVEX_HULL_NV);
+        c.glStencilThenCoverStrokePathNV(path_obj, 0x1, 0xFF, c.GL_CONVEX_HULL_NV);
 
         c.glDisable(c.GL_STENCIL_TEST);
+        c.glDisable(c.GL_BLEND);
 
         c.glBindFramebuffer(c.GL_DRAW_FRAMEBUFFER, 0);
         c.glBlitNamedFramebuffer(
