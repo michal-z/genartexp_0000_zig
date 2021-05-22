@@ -127,26 +127,28 @@ pub fn main() !void {
             1.0,
         );
 
-        const num_vertices = 11;
         const path_obj = 1;
-        var path_commands: [num_vertices + 1]u8 = undefined;
-        var path_coords: [num_vertices][2]f32 = undefined;
-        var i: u32 = 0;
-        while (i < num_vertices) {
-            if (i == 0) path_commands[i] = c.GL_MOVE_TO_NV else path_commands[i] = c.GL_LINE_TO_NV;
+        {
+            const num_vertices = 11;
+            var path_commands: [num_vertices + 1]u8 = undefined;
+            var path_coords: [num_vertices][2]f32 = undefined;
+            var i: u32 = 0;
+            while (i < num_vertices) {
+                if (i == 0) path_commands[i] = c.GL_MOVE_TO_NV else path_commands[i] = c.GL_LINE_TO_NV;
 
-            const t = @floatCast(f32, stats.time);
-            const frac_i = @intToFloat(f32, i) / num_vertices;
-            const r = 150 + 100.0 * math.sin(t + frac_i * math.tau);
-            const theta = frac_i * math.tau;
-            path_coords[i] = [2]f32{ r * math.cos(theta), r * math.sin(theta) };
-            i += 1;
+                const t = @floatCast(f32, stats.time);
+                const frac_i = @intToFloat(f32, i) / num_vertices;
+                const r = 150 + 100.0 * math.sin(t + frac_i * math.tau);
+                const theta = frac_i * math.tau;
+                path_coords[i] = [2]f32{ r * math.cos(theta), r * math.sin(theta) };
+                i += 1;
+            }
+            path_commands[num_vertices] = c.GL_CLOSE_PATH_NV;
+
+            c.glPathCommandsNV(path_obj, path_commands.len, &path_commands, path_coords.len * 2, c.GL_FLOAT, &path_coords);
+            c.glPathParameterfNV(path_obj, c.GL_PATH_STROKE_WIDTH_NV, 6.5);
+            c.glPathParameteriNV(path_obj, c.GL_PATH_JOIN_STYLE_NV, c.GL_ROUND_NV);
         }
-        path_commands[num_vertices] = c.GL_CLOSE_PATH_NV;
-
-        c.glPathCommandsNV(path_obj, path_commands.len, &path_commands, path_coords.len * 2, c.GL_FLOAT, &path_coords);
-        c.glPathParameterfNV(path_obj, c.GL_PATH_STROKE_WIDTH_NV, 6.5);
-        c.glPathParameteriNV(path_obj, c.GL_PATH_JOIN_STYLE_NV, c.GL_ROUND_NV);
 
         c.glEnable(c.GL_BLEND);
         c.glBlendFunc(c.GL_SRC_ALPHA, c.GL_ONE_MINUS_SRC_ALPHA);
@@ -159,6 +161,8 @@ pub fn main() !void {
 
         c.glColor3f(0.0, 0.0, 0.0);
         c.glStencilThenCoverStrokePathNV(path_obj, 0x1, 0xFF, c.GL_CONVEX_HULL_NV);
+
+        //c.glPathCommandsNV(path_obj, path_commands.len, &path_commands, path_coords.len * 2, c.GL_FLOAT, &path_coords);
 
         c.glDisable(c.GL_STENCIL_TEST);
         c.glDisable(c.GL_BLEND);
