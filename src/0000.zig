@@ -64,7 +64,7 @@ pub fn main() !void {
         \\  #version 460 compatibility
         \\
         \\  void main() {
-        \\      gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+        \\      gl_FragColor = vec4(0.0, 0.8, 0.1, 1.0);
         \\  }
     ));
     defer c.glDeleteProgram(fs);
@@ -75,7 +75,6 @@ pub fn main() !void {
     if (image_data == null) {
         std.debug.panic("Failed to load image.\n", .{});
     }
-    defer c.stbi_image_free(image_data);
 
     var image_tex: c.GLuint = undefined;
     c.glCreateTextures(c.GL_TEXTURE_2D, 1, &image_tex);
@@ -83,6 +82,7 @@ pub fn main() !void {
     c.glTextureSubImage2D(image_tex, 0, 0, 0, image_w, image_h, c.GL_RGBA, c.GL_UNSIGNED_BYTE, image_data);
     c.glTextureParameteri(image_tex, c.GL_TEXTURE_MIN_FILTER, c.GL_LINEAR);
     c.glTextureParameteri(image_tex, c.GL_TEXTURE_MAG_FILTER, c.GL_LINEAR);
+    c.stbi_image_free(image_data);
     defer c.glDeleteTextures(1, &image_tex);
 
     while (c.glfwWindowShouldClose(window) == c.GLFW_FALSE) {
@@ -127,30 +127,38 @@ pub fn main() !void {
             1.0,
         );
 
-        const num_vertices = 8;
+        const num_vertices = 11;
         const path_obj = 1;
-        var path_commands: [num_vertices]u8 = undefined;
+        var path_commands: [num_vertices + 1]u8 = undefined;
         var path_coords: [num_vertices][2]f32 = undefined;
-        path_commands[0] = c.GL_MOVE_TO_NV;
-        path_coords[0] = [2]f32{ 200.0, 0.0 };
-        var i: u32 = 1;
+        var i: u32 = 0;
         while (i < num_vertices) {
-            const theta = @intToFloat(f32, i) / num_vertices * math.pi * 2.0;
-            path_commands[i] = c.GL_LINE_TO_NV;
-            path_coords[i] = [2]f32{ 200.0 * math.cos(theta), 200.0 * math.sin(theta) };
+            if (i == 0) path_commands[i] = c.GL_MOVE_TO_NV else path_commands[i] = c.GL_LINE_TO_NV;
+
+            const t = @floatCast(f32, stats.time);
+            const frac_i = @intToFloat(f32, i) / num_vertices;
+            const r = 150 + 100.0 * math.sin(t + frac_i * math.tau);
+            const theta = frac_i * math.tau;
+            path_coords[i] = [2]f32{ r * math.cos(theta), r * math.sin(theta) };
             i += 1;
         }
+        path_commands[num_vertices] = c.GL_CLOSE_PATH_NV;
+
         c.glPathCommandsNV(path_obj, path_commands.len, &path_commands, path_coords.len * 2, c.GL_FLOAT, &path_coords);
-        c.glPathParameterfNV(path_obj, c.GL_PATH_STROKE_WIDTH_NV, 6.5);
+        c.glPathParameterfNV(path_obj, c.GL_PATH_STROKE_WIDTH_NV, 8.5);
         c.glPathParameteriNV(path_obj, c.GL_PATH_JOIN_STYLE_NV, c.GL_ROUND_NV);
 
-        c.glStencilStrokePathNV(path_obj, 0x1, 0xFF);
-
         c.glEnable(c.GL_STENCIL_TEST);
-        c.glStencilFunc(c.GL_NOTEQUAL, 0, 0x1F);
+        c.glStencilFunc(c.GL_NOTEQUAL, 0, 0xFF);
         c.glStencilOp(c.GL_KEEP, c.GL_KEEP, c.GL_ZERO);
-        c.glColor3f(1.0, 1.0, 0.0);
-        c.glCoverStrokePathNV(path_obj, c.GL_BOUNDING_BOX_NV);
+
+        c.glColor3f(1.0, 0.5, 1.0);
+        c.glStencilFillPathNV(path_obj, c.GL_COUNT_UP_NV, 0xFF);
+        c.glCoverFillPathNV(path_obj, c.GL_BOUNDING_BOX_NV);
+
+        c.glColor3f(0.0, 0.0, 0.0);
+        c.glStencilStrokePathNV(path_obj, 0x1, 0xFF);
+        c.glCoverStrokePathNV(path_obj, c.GL_CONVEX_HULL_NV);
 
         c.glDisable(c.GL_STENCIL_TEST);
 
