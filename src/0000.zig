@@ -162,7 +162,25 @@ pub fn main() !void {
         c.glColor3f(0.0, 0.0, 0.0);
         c.glStencilThenCoverStrokePathNV(path_obj, 0x1, 0xFF, c.GL_CONVEX_HULL_NV);
 
-        //c.glPathCommandsNV(path_obj, path_commands.len, &path_commands, path_coords.len * 2, c.GL_FLOAT, &path_coords);
+        {
+            const num_vertices = 128;
+            var path_commands: [num_vertices]u8 = undefined;
+            var path_coords: [num_vertices][2]f32 = undefined;
+
+            var i: u32 = 0;
+            while (i < num_vertices) {
+                if (i == 0) path_commands[i] = c.GL_MOVE_TO_NV else path_commands[i] = c.GL_LINE_TO_NV;
+                const frac_i = @intToFloat(f32, i) / num_vertices;
+                path_coords[i] = [2]f32{ frac_i * 900.0, 50.0 * math.sin(math.tau * frac_i * 4.0) };
+                i += 1;
+            }
+
+            c.glPathCommandsNV(path_obj, path_commands.len, &path_commands, path_coords.len * 2, c.GL_FLOAT, &path_coords);
+            c.glPathParameterfNV(path_obj, c.GL_PATH_STROKE_WIDTH_NV, 5.5);
+        }
+
+        c.glColor3f(0.0, 0.0, 0.0);
+        c.glStencilThenCoverStrokePathNV(path_obj, 0x1, 0xFF, c.GL_CONVEX_HULL_NV);
 
         c.glDisable(c.GL_STENCIL_TEST);
         c.glDisable(c.GL_BLEND);
